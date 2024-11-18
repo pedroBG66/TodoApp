@@ -1,11 +1,14 @@
 package com.example.todoapp.activities
 
+import android.content.ContentValues
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.contentValuesOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.todoapp.R
+import com.example.todoapp.utils.DbHelper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,5 +20,14 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val db = DbHelper(this).writableDatabase
+
+        val values = ContentValues()
+
+        //INSERT()
+
+
+
     }
 }
