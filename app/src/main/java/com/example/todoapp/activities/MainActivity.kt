@@ -8,6 +8,8 @@ import androidx.core.content.contentValuesOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.todoapp.R
+import com.example.todoapp.daos.TaskDao
+import com.example.todoapp.data.Task
 import com.example.todoapp.utils.DbHelper
 
 class MainActivity : AppCompatActivity() {
@@ -20,14 +22,14 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val taskDao = TaskDao(this)
+        taskDao.insert(Task(-1, "testing5", false))
+        println("Inserted row ID: $taskDao")
 
-        val db = DbHelper(this).writableDatabase
-
-        val values = ContentValues()
-
-        //INSERT()
-
-
-
+        val taskList = taskDao.findAll()
+        for(task in taskList){
+            println("Task list size: ${taskList.size}")
+            println(task)
+        }
     }
 }

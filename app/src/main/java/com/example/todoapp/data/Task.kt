@@ -1,6 +1,7 @@
 package com.example.todoapp.data
 
-class Task(val id : Long, var name: String, var done: Boolean) {
+data class Task(val id : Long, var name: String, var done: Boolean) {
+
     companion object {
         const val TABLE_NAME = "Task"
         const val COLUMN_ID = "id"
