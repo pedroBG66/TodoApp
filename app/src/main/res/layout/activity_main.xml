@@ -13,6 +13,7 @@
         android:layout_width="287dp"
         android:layout_height="263dp"
         android:src="@drawable/image_flatten_circles_foreground"
+        android:translationX="-50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
