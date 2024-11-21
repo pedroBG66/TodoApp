@@ -43,7 +43,7 @@ class TaskDao(val context: Context) {
         open()
         val values = ContentValues().apply {
             put(Task.COLUMN_NAME, task.name)
-            put(Task.COLUMN_DONE, task.name)
+            put(Task.COLUMN_DONE, task.done)
         }
 
         try {

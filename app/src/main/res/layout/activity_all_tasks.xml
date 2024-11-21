@@ -44,7 +44,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Date:"
+        android:text="Tasklist:"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="20dp"
@@ -53,35 +53,34 @@
 
 
     </TextView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:layout_gravity="end"
+        app:layout_constraintEnd_toEndOf="@+id/tasksCard"
+        app:layout_constraintBottom_toTopOf="@+id/tasksCard"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/tasksCard"
-        android:layout_width="314dp"
+        android:layout_width="350dp"
         android:layout_height="250dp"
-        android:layout_marginTop="134dp"
-        android:layout_marginBottom="16dp"
         app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avatarIcon">
+        app:layout_constraintStart_toStartOf="parent">
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:padding="8dp" />
+            android:clipToPadding="false" />
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addTaskButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_add"
-            android:layout_gravity="end"/>
+
 
 
     </androidx.cardview.widget.CardView>

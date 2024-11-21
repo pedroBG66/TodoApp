@@ -3,4 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="hero">#EDDEF2</color>
+    <color name="delete">#C73739</color>
+    <color name="update">#4B85D2</color>
 </resources>

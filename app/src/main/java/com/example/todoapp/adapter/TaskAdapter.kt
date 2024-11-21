@@ -6,12 +6,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.data.Task
 import com.example.todoapp.databinding.ItemTasklayoutBinding
 
-class TaskAdapter(var items: List<Task>, val onItemClick: (Int) -> Unit) : RecyclerView.Adapter<ViewHolder>() {
+class TaskAdapter(var items: List<Task>,
+                  val onItemUpdate: (Int) -> Unit,
+                  val onItemCheck: (Int) -> Unit,
+                  val onItemDelete: (Int) -> Unit
+) : RecyclerView.Adapter<ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val task = items[position]
         holder.render(task)
         holder.itemView.setOnClickListener {
-            onItemClick(position)
+            onItemCheck(position)
+        }
+        holder.binding.doneCheckBox.setOnCheckedChangeListener { checkBox, _ ->
+            //esto era para resolver el problema del checkbox
+            if (checkBox.isPressed) {
+                onItemCheck(position)
+            }
+        }
+        holder.binding.deleteButton.setOnClickListener {
+            onItemDelete(position)
+        }
+        holder.binding.updateButton.setOnClickListener {
+            onItemUpdate(position)
         }
     }
 
