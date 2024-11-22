@@ -16,6 +16,7 @@ class TaskAdapter(var items: List<Task>,
         holder.render(task)
         holder.itemView.setOnClickListener {
             onItemCheck(position)
+
         }
         holder.binding.doneCheckBox.setOnCheckedChangeListener { checkBox, _ ->
             //esto era para resolver el problema del checkbox
@@ -28,6 +29,7 @@ class TaskAdapter(var items: List<Task>,
         }
         holder.binding.updateButton.setOnClickListener {
             onItemUpdate(position)
+
         }
     }
 

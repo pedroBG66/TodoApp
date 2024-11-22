@@ -1,6 +1,5 @@
 package com.example.todoapp.activities
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -14,125 +13,141 @@ import com.example.todoapp.data.Task
 import com.example.todoapp.databinding.ActivityAllTasksBinding
 import com.example.todoapp.databinding.ActivityTask2Binding
 
-
 class AllTasksActivity : AppCompatActivity() {
 
-
     lateinit var binding: ActivityAllTasksBinding
-
     lateinit var adapter: TaskAdapter
-
     lateinit var taskDAO: TaskDao
-
     var taskList: MutableList<Task> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //enableEdgeToEdge()
-
         binding = ActivityAllTasksBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Configuración de márgenes de la vista para bordes
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
+        // Inicialización del DAO
         taskDAO = TaskDao(this)
 
-        adapter = TaskAdapter(taskList, {
-            // Editar tarea
-            val task = taskList[it]
-            showTask(task)
-        }, {
-            // Marcar tarea
-            val task = taskList[it]
-            checkTask(task)
-        }, {
-            // Borrar tarea
-            val task = taskList[it]
-            deleteTask(task)
+        // Configuración del adaptador
+        adapter = TaskAdapter(taskList, { position ->
+            val task = taskList[position]
+            showTask(task) // Editar tarea
+        }, { position ->
+            val task = taskList[position]
+            checkTask(task) // Marcar tarea como hecha/no hecha
+        }, { position ->
+            val task = taskList[position]
+            deleteTask(task) // Borrar tarea
         })
 
-
-        //esto lo creamos al inicio para ver si funciona la actualizacion
-        /*adapter = TaskAdapter(taskList) {
-            val task = taskList[it]
-            task.done = !task.done
-            taskDAO.update(task)
-            adapter.updateItems(taskList)
-        }*/
-
+        // Configuración del RecyclerView
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
+        // Botón para agregar una nueva tarea
         binding.addTaskButton.setOnClickListener {
-            val alertDialogBinding =
-                ActivityTask2Binding.inflate(layoutInflater) // Nombre generado por ViewBinding para dialog_task.xml
-            val alertDialog = AlertDialog.Builder(this)
-                .setView(alertDialogBinding.root)
-                .create()
-            alertDialog.show()
-
-            alertDialogBinding.saveButton.setOnClickListener {
-
-                val taskName = alertDialogBinding.nameTextField.editText?.text.toString()
-                if (taskName.isEmpty()) {
-                    alertDialogBinding.nameTextField.error = "Escribe algo"
-                    return@setOnClickListener
-                }
-                if (taskName.length > 50) {
-                    alertDialogBinding.nameTextField.error = "Te pasaste"
-                    return@setOnClickListener
-                }
-
-                val task = Task(-1, taskName)
-                taskDAO.insert(task)
-
-                alertDialog.dismiss()
-                taskList = taskDAO.findAll().toMutableList()
-                adapter.updateItems(taskList)
-            }
+            popUpHelper(onSave = { newTask ->
+                taskDAO.insert(newTask) // Guardar la nueva tarea
+                updateTaskList() // Actualizar la lista y adaptador
+            })
         }
-
     }
 
     override fun onResume() {
         super.onResume()
+        updateTaskList()
+    }
+
+    // Actualizar lista y adaptador
+    private fun updateTaskList() {
         taskList = taskDAO.findAll().toMutableList()
         adapter.updateItems(taskList)
     }
 
-    // Funcion para cuando marcamos una tarea (finalizada/pendiente)
-    fun checkTask(task: Task) {
+    // Función para marcar una tarea como hecha/no hecha
+    private fun checkTask(task: Task) {
         task.done = !task.done
         taskDAO.update(task)
-        adapter.updateItems(taskList)
+        updateTaskList()
     }
 
-    // Funciona para mostrar un dialogo para borrar la tarea
-    fun deleteTask(task: Task) {
-        // Mostramos un dialogo para asegurarnos de que el usuario quiere borrar la tarea
+    // Función para borrar la tarea
+    private fun deleteTask(task: Task) {
+        taskDAO.delete(task)
+        taskList.remove(task)
+        updateTaskList()
+        //caso de que queremos preguntar si queremos eliminar la tarea!
+        /*
         AlertDialog.Builder(this)
             .setTitle("Borrar tarea")
-            .setMessage("Estas seguro de que quieres borrar la tarea?")
-            .setPositiveButton(android.R.string.ok) { _, which ->
-                // Borramos la tarea en caso de pulsar el boton OK
-                taskDAO.delete(task)
-                taskList.remove(task)
-                adapter.updateItems(taskList)
+            .setMessage("¿Estás seguro de que quieres borrar esta tarea?")
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+
             }
             .setNegativeButton(android.R.string.cancel, null)
             .setIcon(R.drawable.ic_delete)
-            .show()
+            .show()*/
     }
 
-    // Mostramos la tarea para editarla
-    fun showTask(task: Task) {
-        val intent = Intent(this, TaskActivity2::class.java)
-        intent.putExtra(TaskActivity2.EXTRA_TASK_ID, task.id)
-        startActivity(intent)
+    // Mostrar un diálogo para editar una tarea existente
+    private fun showTask(task: Task) {
+        popUpHelper(task = task, onSave = { updatedTask ->
+            taskDAO.update(updatedTask) // Actualizar la tarea en la base de datos
+            updateTaskList() // Actualizar la lista y adaptador
+        })
+    }
+
+    // Función genérica para mostrar un diálogo (reutilizable para agregar o editar tareas)
+    private fun popUpHelper(
+        task: Task? = null, // Tarea opcional (nula si es una nueva tarea)
+        onSave: (Task) -> Unit // Callback para guardar la tarea
+    ) {
+        // Inflar el layout del diálogo
+        val alertDialogBinding = ActivityTask2Binding.inflate(layoutInflater)
+
+        // Crear el diálogo
+        val alertDialog = AlertDialog.Builder(this)
+            .setView(alertDialogBinding.root)
+            .create()
+
+        // Precargar datos si la tarea no es nula (modo edición)
+        task?.let {
+            alertDialogBinding.nameTextField.editText?.setText(it.name)
+        }
+
+        // Configurar botón "Guardar"
+        alertDialogBinding.saveButton.setOnClickListener {
+            val taskName = alertDialogBinding.nameTextField.editText?.text.toString()
+
+            // Validaciones
+            if (taskName.isEmpty()) {
+                alertDialogBinding.nameTextField.error = "Escribe algo"
+                return@setOnClickListener
+            }
+            if (taskName.length > 50) {
+                alertDialogBinding.nameTextField.error = "Te pasaste"
+                return@setOnClickListener
+            }
+
+            // Crear o actualizar la tarea
+            val updatedTask = task?.apply { name = taskName } ?: Task(-1, taskName)
+
+            // Ejecutar la acción de guardado
+            onSave(updatedTask)
+
+            // Cerrar el diálogo
+            alertDialog.dismiss()
+        }
+
+        // Mostrar el diálogo
+        alertDialog.show()
     }
 }

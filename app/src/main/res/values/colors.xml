@@ -5,4 +5,11 @@
     <color name="hero">#EDDEF2</color>
     <color name="delete">#C73739</color>
     <color name="update">#4B85D2</color>
+    <color name="textColor">#5F1088</color>
+    <color name="halfLayoutColor">#C076E6</color>
+    <color name="checked">#580B80</color>
+    <color name="notChecked">#CA63FF</color>
+
+
+
 </resources>

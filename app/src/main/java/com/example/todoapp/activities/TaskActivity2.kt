@@ -48,30 +48,5 @@ class TaskActivity2 : AppCompatActivity() {
         }else {
             task = Task(-1, "")
         }
-
-        binding.saveButton.setOnClickListener {
-
-            val taskName = binding.nameTextField.editText?.text.toString()
-            if (taskName.isEmpty()) {
-                binding.nameTextField.error = "Escribe algo"
-                return@setOnClickListener
-            }
-            if (taskName.length > 50) {
-                binding.nameTextField.error = "Te pasaste"
-                return@setOnClickListener
-            }
-
-
-            task.name = taskName
-
-            // Si la tarea existe la actualizamos si no la insertamos
-            if (isEditing) {
-                taskDAO.update(task)
-            } else {
-                taskDAO.insert(task)
-            }
-
-            finish()
-        }
     }
 }

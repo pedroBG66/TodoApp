@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Fondo cuando el CheckBox está marcado -->
+    <item android:drawable="@drawable/check_circle" android:state_checked="true" />
+    <!-- Fondo cuando el CheckBox no está marcado -->
+    <item android:drawable="@drawable/circle" android:state_checked="false" />
+</selector>
